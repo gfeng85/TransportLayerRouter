@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "./log4j.dtd">
+
+<log4j:configuration>
+	<appender name="rootAppender" class="org.apache.log4j.RollingFileAppender">
+		<param name="Append" value="true"/>
+		<param name="File" value="../log/root.log"/>
+		<param name="MaxFileSize" value="50MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d [%t] %p %X{ID} %X{operationName} %X{userId} - %m%n"/>
+		</layout>
+	</appender>
+	<appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d [%t] %p %X{ID} %X{operationName} %X{userId} - %m%n"/>
+		</layout>
+	</appender>	
+	<root>       
+	    <level value="INFO" />
+	    <appender-ref ref="rootAppender"/>
+	    <appender-ref ref="ConsoleAppender" />
+ 	 </root>
+</log4j:configuration>

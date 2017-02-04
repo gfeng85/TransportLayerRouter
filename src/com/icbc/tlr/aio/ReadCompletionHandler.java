@@ -7,71 +7,37 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
+import org.apache.log4j.Logger;
+
 import com.icbc.tlr.Constants;
-
-public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuffer> {
-	private int sourcePort;
-	private AsynchronousSocketChannel channel;
-	private AsynchronousSocketChannel destChannel=null;
-	public ReadCompletionHandler(AsynchronousSocketChannel channel,int sourcePort) {
-		this.sourcePort=sourcePort;
-		if (this.channel == null)
-			this.channel = channel;
-	}
-
+/**
+ * 从packet的sourceChannel读取数据后，写入destChannel
+ * @author kfzx-gaofeng1
+ *
+ */
+public class ReadCompletionHandler implements CompletionHandler<Integer, Packet> {
+	private static final Logger logger = Logger.getLogger(ReadCompletionHandler.class);
 	@Override
-	public void completed(Integer result, ByteBuffer attachment) {
-		try {
-			if(destChannel==null){
-				String[] s = Constants.getTcpmap().get(sourcePort);
-				destChannel = AsynchronousSocketChannel.open();
-				destChannel.connect(new InetSocketAddress(s[0], Integer.parseInt(s[1])), destChannel, new AsyncTimeClientHandler());
-			}
-			attachment.flip();//切换至Read模式
-			byte[] body = new byte[attachment.remaining()];
-			attachment.get(body);
-			String req = new String(body, "UTF-8");
-			System.out.println("The time server receive order : " + req);
-			String currentTime = "QUERY TIME ORDER".equalsIgnoreCase(req)
-					? new java.util.Date(System.currentTimeMillis()).toString() : "BAD ORDER";
-			doWrite(currentTime);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void completed(Integer result, Packet attachment) {
+		attachment.getBuffer().flip();
+		if(result<0){
+			logger.info(attachment.getUuid()+" socket closed! "+result);
+			try {attachment.getFromChannel().close();} catch (IOException e) {}
+			try {attachment.getToChannel().close();} catch (IOException e) {}
 		}
-	}
-
-	private void doWrite(String currentTime) {
-		if (currentTime != null && currentTime.trim().length() > 0) {
-			byte[] bytes = (currentTime).getBytes();
-			ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
-			writeBuffer.put(bytes);
-			writeBuffer.flip();
-			channel.write(writeBuffer, writeBuffer, new CompletionHandler<Integer, ByteBuffer>() {
-				@Override
-				public void completed(Integer result, ByteBuffer buffer) {
-					// 如果没有发送完成，继续发送
-					if (buffer.hasRemaining())
-						channel.write(buffer, buffer, this);
-				}
-
-				@Override
-				public void failed(Throwable exc, ByteBuffer attachment) {
-					try {
-						channel.close();
-					} catch (IOException e) {
-						// ingnore on close
-					}
-				}
-			});
+		else if(attachment.getFromChannel().isOpen()
+				&&attachment.getToChannel().isOpen()
+				&&result>0){
+			logger.info(attachment.getUuid()+" read completed! write to ToChannel");
+			attachment.getToChannel().write(attachment.getBuffer(), attachment,StartTlrAio.writeCompletionHandler);
 		}
+		
 	}
-
+	
 	@Override
-	public void failed(Throwable exc, ByteBuffer attachment) {
+	public void failed(Throwable exc, Packet attachment) {
 		try {
-			this.channel.close();
+			attachment.getFromChannel().close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

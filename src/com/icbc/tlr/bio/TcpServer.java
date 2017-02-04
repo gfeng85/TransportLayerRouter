@@ -36,10 +36,12 @@ public class TcpServer implements Runnable{
 			destIs=destSocket.getInputStream();
 			
 			StreamLinker sls = new StreamLinker(sourceSocket,destSocket,sourceIs,destOs);
-			new Thread(sls,Thread.currentThread().getName()+"_req").start();
+			Thread slsThread = new Thread(sls,Thread.currentThread().getName()+"_req");
+			slsThread.start();
 			StreamLinker sld = new StreamLinker(sourceSocket,destSocket,destIs,sourceOs);
-			new Thread(sld,Thread.currentThread().getName()+"_rep").start();
-			while(!sourceSocket.isClosed()&&!destSocket.isClosed()){
+			Thread sldThread = new Thread(sld,Thread.currentThread().getName()+"_rep");
+			sldThread.start();
+			while(slsThread.isAlive()||sldThread.isAlive()){
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -49,11 +51,7 @@ public class TcpServer implements Runnable{
 		}catch (IOException e1) {
 			e1.printStackTrace();
 		}finally{
-			try {sourceOs.close();} catch (IOException e) {}
-			try {sourceIs.close();} catch (IOException e) {}
 			try {sourceSocket.close();} catch (IOException e) {}
-			try {destOs.close();} catch (IOException e) {}
-			try {destIs.close();} catch (IOException e) {}
 			try {destSocket.close();} catch (IOException e) {}
 		}
 	}

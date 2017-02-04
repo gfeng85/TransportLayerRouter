@@ -29,18 +29,20 @@ public class StreamLinker implements Runnable{
 		int len=0;
 		byte []buf=new byte[1000];
 		try {
-			while(!sourceSocket.isClosed()&&!destSocket.isClosed()){
-				if((len=is.read(buf))>0){
-					logger.info(new String(buf,0,len));
-					os.write(buf,0,len);
-				}else{
-					try {Thread.sleep(1000);} catch (InterruptedException e) {}
-				}
+			while(!sourceSocket.isClosed()&&!destSocket.isClosed()&&(len=is.read(buf))>0){
+				logger.info(new String(buf,0,len));
+				os.write(buf,0,len);
 			}
 		} catch (IOException e) {
 			logger.error("destSocket.isClosed():"+destSocket.isClosed());
 			logger.error(e);
 			e.printStackTrace();
+		}finally{
+			logger.info("StreamLinker quit:"+Thread.currentThread().getName());
+			try {sourceSocket.close();} catch (IOException e) {}
+			try {destSocket.close();} catch (IOException e) {}
+			
+			
 		}
 		
 	}

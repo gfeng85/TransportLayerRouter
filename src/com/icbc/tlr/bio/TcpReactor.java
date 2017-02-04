@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import com.icbc.tlr.Constants;
 
 public class TcpReactor implements Runnable{
-	private static final Logger logger = Logger.getLogger(StartTlr.class);
+	private static final Logger logger = Logger.getLogger(TcpReactor.class);
 	private int listerningPort=0;
 	private String[] dest;//destIp,destPort
 	public TcpReactor(int port){
@@ -29,7 +29,7 @@ public class TcpReactor implements Runnable{
 			while(true)
 			{
 				logger.info("TcpReactor is started. Lisening Port:"+listerningPort);
-				Socket sourceSock=sourceServerSock.accept();
+				Socket sourceSock=sourceServerSock.accept();//×èÈû
 				TcpServer ts = new TcpServer(sourceSock,dest);
 				new Thread(ts,"TcpServer"+listerningPort+"_"+i++).start();
 			}

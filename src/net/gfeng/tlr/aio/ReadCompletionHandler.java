@@ -1,4 +1,5 @@
-package com.icbc.tlr.aio;
+package net.gfeng.tlr.
+aio;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,7 +10,7 @@ import java.nio.channels.CompletionHandler;
 
 import org.apache.log4j.Logger;
 
-import com.icbc.tlr.Constants;
+import net.gfeng.tlr.Constants;
 /**
  * 从packet的sourceChannel读取数据后，写入destChannel
  * @author kfzx-gaofeng1
@@ -19,6 +20,7 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, Packet>
 	private static final Logger logger = Logger.getLogger(ReadCompletionHandler.class);
 	@Override
 	public void completed(Integer result, Packet attachment) {
+		String tmp = new String(attachment.getBuffer().array());
 		attachment.getBuffer().flip();
 		if(result<0){
 			logger.info(attachment.getUuid()+" socket closed! "+result);
@@ -29,6 +31,7 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, Packet>
 				&&attachment.getToChannel().isOpen()
 				&&result>0){
 			logger.info(attachment.getUuid()+" read completed! write to ToChannel");
+			logger.info(tmp);
 			attachment.getToChannel().write(attachment.getBuffer(), attachment,StartTlrAio.writeCompletionHandler);
 		}
 		

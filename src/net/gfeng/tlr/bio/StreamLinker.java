@@ -1,4 +1,5 @@
-package com.icbc.tlr.bio;
+package net.gfeng.tlr.
+bio;
 
 import java.io.IOException;
 import java.io.InputStream;

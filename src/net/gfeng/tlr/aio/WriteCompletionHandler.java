@@ -1,4 +1,5 @@
-package com.icbc.tlr.aio;
+package net.gfeng.tlr.
+aio;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,7 +10,7 @@ import java.nio.channels.CompletionHandler;
 
 import org.apache.log4j.Logger;
 
-import com.icbc.tlr.Constants;
+import net.gfeng.tlr.Constants;
 /**
  * 向packet的dest写入数据后，再从dest读取数据，并转换packet的dest和souce
  * @author kfzx-gaofeng1

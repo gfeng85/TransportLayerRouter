@@ -1,4 +1,5 @@
-package com.icbc.tlr.nio;
+package net.gfeng.tlr.
+nio;
 
 
 import java.io.BufferedReader;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.icbc.tlr.Constants;
+import net.gfeng.tlr.Constants;
 
 public class StartTlrNio {
 	private static final Logger logger = Logger.getLogger(StartTlrNio.class);
@@ -97,6 +98,8 @@ public class StartTlrNio {
 						if(toSocketChannel!=null){
 							ByteBuffer buffer = ByteBuffer.allocate(1024);
 							int readResult=fromSocketChannel.read(buffer);
+							String tmp = new String(buffer.array());
+							logger.info(tmp);
 							if(readResult<0){
 								try{fromSocketChannel.close();}catch(IOException e) {}
 								try{toSocketChannel.close();}catch(IOException e) {}

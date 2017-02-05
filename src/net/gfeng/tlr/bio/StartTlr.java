@@ -1,4 +1,5 @@
-package com.icbc.tlr.bio;
+package net.gfeng.tlr.
+bio;
 
 
 import java.io.BufferedReader;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.icbc.tlr.Constants;
+import net.gfeng.tlr.Constants;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

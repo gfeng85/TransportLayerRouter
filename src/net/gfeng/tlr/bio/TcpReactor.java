@@ -1,4 +1,5 @@
-package com.icbc.tlr.bio;
+package net.gfeng.tlr.
+bio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -7,7 +8,7 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import com.icbc.tlr.Constants;
+import net.gfeng.tlr.Constants;
 
 public class TcpReactor implements Runnable{
 	private static final Logger logger = Logger.getLogger(TcpReactor.class);

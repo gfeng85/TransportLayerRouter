@@ -1,4 +1,5 @@
-package com.icbc.tlr.bio;
+package net.gfeng.tlr.
+bio;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.icbc.tlr.Constants;
+import net.gfeng.tlr.Constants;
 
 public class UdpReactor {
 	
